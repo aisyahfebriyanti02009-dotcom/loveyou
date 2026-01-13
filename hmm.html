@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Gemes Banget</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* BACKGROUND */
+.bg{
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  transition:opacity .6s ease;
+  z-index:-2;
+}
+
+/* LOVE GLOBAL */
+#love-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:3;
+}
+
+.heart{
+  position:absolute;
+  top:-20px;
+  color:pink;
+  font-size:18px;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  to{transform:translateY(110vh);opacity:0;}
+}
+
+/* PAGE */
+.page{
+  display:none;
+  height:100vh;
+  width:100%;
+  padding-bottom:90px;
+  justify-content:center;
+  align-items:center;
+}
+
+.page.active{display:flex;}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,.65);
+  border-radius:30px;
+  padding:25px;
+  width:85%;
+  max-width:520px;
+  backdrop-filter:blur(6px);
+  z-index:2;
+}
+
+h1{color:#7ecbff;margin:0 0 10px;}
+p{
+  color:#ff9ecf;
+  font-size:16px;
+  line-height:1.6;
+  max-height:260px;
+  overflow:auto;
+}
+
+.card img{
+  width:100%;
+  border-radius:18px;
+  margin-top:15px;
+}
+
+/* NAV */
+.nav{
+  position:fixed;
+  bottom:20px;
+  left:0;
+  width:100%;
+  text-align:center;
+  z-index:4;
+}
+
+.nav button{
+  padding:12px 30px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,#9ad9ff,#ffb6d9);
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+
+/* PAGE 5 */
+#page5{
+  background:black;
+  position:relative;
+  overflow:hidden;
+}
+
+.fall-text{
+  position:absolute;
+  top:-40px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#ffb6d9;
+  font-size:24px;
+  white-space:nowrap;
+  animation:fallText linear forwards;
+}
+
+@keyframes fallText{
+  to{transform:translate(-50%,110vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+<div id="love-layer"></div>
+
+<!-- PAGE 1 -->
+<div class="page active">
+  <div class="card">
+    <h1>hai kamu</h1>
+    <p>
+      ini halaman pertama  
+      bisa buat long text  
+      mau cerita panjang  
+      aman  
+      ga kepotong
+    </p>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+  <div class="card">
+    <h1>halaman dua</h1>
+    <p>
+      bagian ini juga buat text panjang  
+      scroll aman  
+      tampil rapi
+    </p>
+    <img src="1.jpg">
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page">
+  <div class="card">
+    <h1>halaman tiga</h1>
+    <p>
+      cerita lain bisa ditaro di sini  
+      ga numpuk  
+      enak dibaca
+    </p>
+    <img src="3.jpg">
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page">
+  <div class="card">
+    <h1>halaman empat</h1>
+    <p>
+      halaman terakhir sebelum penutup  
+      masih long text
+    </p>
+    <img src="2.jpg">
+  </div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="page5"></div>
+
+<div class="nav">
+  <button onclick="nextPage()">pencet sini</button>
+</div>
+
+<script>
+const pages=document.querySelectorAll('.page');
+const bg=document.getElementById('bg');
+const loveLayer=document.getElementById('love-layer');
+const imgs=["ini.jpg","sunset.jpg","c.jpg","apa.jpg"];
+let idx=0;
+let heartTimer;
+let textTimer;
+
+/* BACKGROUND */
+function setBG(img){
+  bg.style.opacity=0;
+  setTimeout(()=>{
+    bg.style.backgroundImage=`url(${img})`;
+    bg.style.opacity=1;
+  },300);
+}
+
+/* NAV */
+function nextPage(){
+  pages[idx].classList.remove('active');
+  idx++;
+  if(idx>=pages.length) idx=pages.length-1;
+  pages[idx].classList.add('active');
+
+  if(idx<4){
+    setBG(imgs[idx]);
+    stopText();
+  }else{
+    bg.style.opacity=0;
+    startText();
+    document.querySelector('.nav button').innerText="kembali nya disini ya sayang";
+    document.querySelector('.nav button').onclick=restart;
+  }
+}
+
+function restart(){
+  pages[idx].classList.remove('active');
+  idx=0;
+  pages[idx].classList.add('active');
+  setBG(imgs[0]);
+  stopText();
+  document.querySelector('.nav button').innerText="pencet sini";
+  document.querySelector('.nav button').onclick=nextPage;
+}
+
+/* LOVE GLOBAL (GA RESTART) */
+function startHearts(){
+  heartTimer=setInterval(()=>{
+    const h=document.createElement('div');
+    h.className='heart';
+    h.innerHTML='❤';
+    h.style.left=Math.random()*90+'%';
+    h.style.animationDuration=5+'s';
+    loveLayer.appendChild(h);
+    setTimeout(()=>h.remove(),6000);
+  },500);
+}
+
+/* PAGE 5 TEXT RAPIH 1 GARIS */
+function startText(){
+  stopText();
+  textTimer=setInterval(()=>{
+    const t=document.createElement('div');
+    t.className='fall-text';
+    t.innerText="i always love you";
+    t.style.animationDuration="6s";
+    page5.appendChild(t);
+    setTimeout(()=>t.remove(),6000);
+  },900);
+}
+function stopText(){clearInterval(textTimer);}
+
+/* INIT */
+setBG(imgs[0]);
+startHearts();
+</script>
+
+</body>
+</html>
